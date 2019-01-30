@@ -1,0 +1,14 @@
+build/
+tmp/
+
+examples/triangle.py
+examples/circle_cocycles.py
+examples/ecg.py
+examples/random_baseline.py
+examples/hash_sequence.py
+examples/chirikov_bifurcation.py
+examples/logistic_bifurcation.py
+
+wrap/python/build
+wrap/python/dist
+wrap/python/semel.egg-info

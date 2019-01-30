@@ -1,0 +1,12 @@
+[package]
+name = "semel"
+version = "0.1.0"
+edition = "2021"
+description = "Safe Rust wrapper for libsemel (persistent cohomology)"
+publish = false
+
+[dependencies]
+semel-sys = { path = "../semel-sys" }
+libc = "0.2"
+anyhow = "1.0"
+serde_json = "1.0"
