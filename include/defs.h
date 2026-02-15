@@ -11,7 +11,7 @@
 #define NBITS 256
 #define MAX_LEN_SIMPLEX_SERIALIZATION 8192
 #define PRECISION 100000
-#define MAX_DIM 1024
+#define MAX_DIM 64
 
 //#define PRINT
 

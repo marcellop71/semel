@@ -55,9 +55,9 @@ int32_t Laplace_eigen(
     for(uint32_t j = 0; j < nL; j++)
     {
       (*a)[k][j] = gsl_vector_get(eig, j);
-      gsl_vector_view colj = gsl_matrix_column(eiv, j);;
+      gsl_vector_view colj = gsl_matrix_column(eiv, j);
       for(uint32_t i = 0; i < nL; i++)
-        { (*v)[k][j + (nL * i)] = gsl_vector_get(&colj, i); }
+        { (*v)[k][j + (nL * i)] = gsl_vector_get(&colj.vector, i); }
     }
 
     gsl_vector_free(eig);
@@ -442,13 +442,25 @@ int32_t Laplace_eigen_sparse(
     gsl_eigen_symmv_sort(eig, eiv, GSL_EIGEN_SORT_VAL_ASC);
 
     // take the nev_k smallest eigenvalues (Ritz values)
+    // and compute Ritz vectors: v_j = Q * s_j where s_j is eigenvector of T
     uint32_t nout = (nev_k < m_actual) ? nev_k : m_actual;
     (*na)[k] = nout;
     (*a)[k] = (double *) malloc(nout * sizeof(double));
-    (*v)[k] = (double *) calloc(nout, sizeof(double));
+    (*v)[k] = (double *) calloc((size_t) nout * nL, sizeof(double));
 
     for (uint32_t j = 0; j < nout; j++)
+    {
       (*a)[k][j] = gsl_vector_get(eig, j);
+      // Ritz vector j = sum_{p=0}^{m_actual-1} eiv[p,j] * Q[:,p]
+      gsl_vector_view sj = gsl_matrix_column(eiv, j);
+      for (uint32_t p = 0; p < m_actual; p++)
+      {
+        double coeff = gsl_vector_get(&sj.vector, p);
+        double * qp = &Q[(size_t) p * nL];
+        for (uint32_t i = 0; i < nL; i++)
+          (*v)[k][j + (nL * i)] += coeff * qp[i];
+      }
+    }
 
     gsl_vector_free(eig); gsl_matrix_free(eiv);
     gsl_eigen_symmv_free(w); gsl_matrix_free(T);

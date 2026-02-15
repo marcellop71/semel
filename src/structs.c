@@ -129,10 +129,10 @@ int32_t complex_cochain_init(
   complex_simplicial_init(&Cc->C);
 
   fmpz_t fp_;
-  fmpz_init(fp_);
   fmpz_init_set_ui(fp_, fp);
   slong fd_ = (slong) fd;
   fq_ctx_init(Cc->fqctx, fp_, fd_, "F");
+  fmpz_clear(fp_);
 
   Cc->D = NULL;
 
@@ -167,9 +167,9 @@ int32_t complex_cochain_init_z(
 
   // init a dummy fq context (p=2, d=1) for safety — not used in integral path
   fmpz_t fp_;
-  fmpz_init(fp_);
   fmpz_init_set_ui(fp_, 2);
   fq_ctx_init(Cc->fqctx, fp_, 1, "F");
+  fmpz_clear(fp_);
 
   Cc->D = NULL;
 
@@ -246,6 +246,7 @@ int32_t time_series_init(
 {
   S->d = d;
   S->n = n;
+  S->x = NULL;
   if ((d * n) > 0)
     { S->x = (double *) malloc((S->d * S->n) * sizeof(double)); }
 

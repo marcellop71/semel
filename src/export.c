@@ -85,9 +85,12 @@ char * export_cocycles(
     k = 0; JLF(q, alpha, k);
     while (q != NULL)
     {
-      int32_t c = atoi(fq_get_str_pretty(*((fq_t *) *q), Cc->fqctx));
+      char * tmp = fq_get_str_pretty(*((fq_t *) *q), Cc->fqctx);
+      int32_t c = atoi(tmp);
+      flint_free(tmp);
       fmpz_t f; fq_ctx_order(f, Cc->fqctx);
       uint32_t o = fmpz_get_ui(f);
+      fmpz_clear(f);
       c = (c > (int32_t) (o >> 1)) ? (c - o) : c;
 
       if (!first_term) { strbuf_append(&sb, ","); }
@@ -292,7 +295,8 @@ char * export_cohomology(
       for (uint64_t k = 0; k < interval_count[d]; ++k)
       {
         double tmp = (interval_death[d][k] - interval_birth[d][k]) / mass[d];
-        entropy[d] += - tmp * log(tmp);
+        if (tmp > 0.0)
+          entropy[d] += - tmp * log(tmp);
       }
     }
   }
@@ -588,7 +592,8 @@ char * export_cohomology_z(
       for (uint64_t k = 0; k < interval_count[d]; ++k)
       {
         double tmp = (interval_death[d][k] - interval_birth[d][k]) / mass[d];
-        entropy[d] += - tmp * log(tmp);
+        if (tmp > 0.0)
+          entropy[d] += - tmp * log(tmp);
       }
     }
   }

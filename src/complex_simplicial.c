@@ -342,13 +342,3 @@ int32_t complex_simplicial_build_auto(
   return 0;
 }
 
-int32_t complex_simplicial_init_array(
-    uint32_t nC,
-    complex_simplicial_t ** C)
-{
-  *C = (complex_simplicial_t *) malloc(nC * sizeof(complex_simplicial_t));
-  for(uint32_t k = 0; k < nC; ++k)
-    { complex_simplicial_init(&(*C)[k]); }
-
-  return 0;
-}

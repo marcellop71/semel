@@ -33,28 +33,6 @@ int32_t simplex_to_array(
   return 0;
 }
 
-// input array is expected to contain indices of vertices
-// (so -1, as an index, is ignored)
-int32_t array_to_simplex(
-    uint32_t ns, uint32_t * sa,
-    void ** s)
-{
-  uint64_t * p;
-  uint8_t v [C_1_KB];
-
-  *s = NULL;
-  for(uint32_t k = 0; k < ns; ++k)
-  {
-    if (sa[k] != ((uint32_t) -1))
-    {
-      uint64_to_256(sa[k], &v[0]);
-      JSLI(p, *s, v); *p = 1;
-    }
-  }
-
-  return 0;
-}
-
 uint32_t simplex_dimension(
     void * s)
 {
@@ -100,16 +78,6 @@ double simplex_max_pairwise_dist(
   return r;
 }
 
-double simplex_circumradius_jung(
-    void * s, point_cloud_t * P)
-{
-  uint32_t ns = 0; uint32_t * sa = NULL;
-  simplex_to_array(s, &ns, P, &sa);
-  double r = circumradius_jung(ns - 1, sa, P);
-  free(sa);
-  return r;
-}
-
 double simplex_circumradius(
     void * s, point_cloud_t * P)
 {
@@ -118,31 +86,6 @@ double simplex_circumradius(
   double r = circumradius(ns - 1, sa, P);
   free(sa);
   return r;
-}
-
-int32_t simplex_smallestball(
-    void * s,
-    uint32_t dim, uint32_t np, double * p,
-    double * cc, double * cr)
-{
-  uint64_t * q;
-  uint64_t i, k;
-  uint8_t v [C_1_KB];
-
-  uint32_t np_ = simplex_dimension(s) + 1;
-  double * p_ = (double *) malloc((dim * np_) * sizeof(double));
-
-  v[0] = 0; JSLF(q, s, v); i = 0;
-  while (q != NULL)
-  {
-    k = uint256_to_64(&v[0]);
-    memcpy(&p_[dim * i], &p[dim * k], dim * sizeof(double));
-    JSLN(q, s, v); i++;
-  }
-
-  smallest_ball(dim, np_, p_, cc, cr);
-  free(p_);
-  return 0;
 }
 
 uint64_t simplex_index_in_coface(

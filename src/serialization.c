@@ -51,24 +51,3 @@ int32_t simplex_serialize(
   return 0;
 }
 
-int32_t serialize_complex(
-    complex_simplicial_t * C)
-{
-  uint64_t * p, * q;
-  uint64_t r;
-  uint8_t sx [MAX_LEN_SIMPLEX_SERIALIZATION];
-
-  r = 0; JLF(p, C->filtration, r);
-  while (p != NULL)
-  {
-    sx[0] = 0; JSLF(q, *p, sx);
-    while (q != NULL)
-    {
-      JSLN(q, *p, sx);
-    }
-
-    JLN(p, C->filtration, r);
-  }
-
-  return 0;
-}

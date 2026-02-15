@@ -94,10 +94,6 @@ int32_t _unload_time_series(
 int32_t _unload_time_series_all(
     );
 
-int32_t _time_delay_embeddings(
-    uint64_t k, uint32_t tau, uint32_t d,
-    uint64_t * kP);
-
 int32_t _nsrps(
     uint64_t ns, uint32_t * s);
 
@@ -118,12 +114,6 @@ int32_t elementary_simplices_coboundary(
 
 int32_t elementary_simplices_coboundary_z(
     complex_cochain_t * Cc);
-
-void * elementary_coboundary_of(
-    uint64_t sid, complex_cochain_t * Cc);
-
-void * elementary_coboundary_of_z(
-    uint64_t sid, complex_cochain_t * Cc);
 
 uint32_t elementary_delta(
     void * alpha, uint32_t method, complex_cochain_t * Cc,
@@ -226,9 +216,6 @@ int32_t distance_matrix(
     uint32_t manifold, uint32_t distance, uint32_t nb, double * b,
     double ** A, double * Amax);
 
-uint32_t num_points_from_card_of_distance_matrix(
-    uint32_t a);
-
 double get_dist(
     uint32_t i, uint32_t j, point_cloud_t * P);
 
@@ -279,25 +266,14 @@ int32_t simplex_to_array(
     void * s, uint32_t * ns, point_cloud_t * P,
     uint32_t ** sa);
 
-int32_t array_to_simplex(
-    uint32_t ns, uint32_t * sa, void ** s);
-
 double simplex_max_pairwise_dist_G(
     void * s, complex_simplicial_t * C);
 
 double simplex_max_pairwise_dist(
     void * s, point_cloud_t * P);
 
-double simplex_circumradius_jung(
-    void * s, point_cloud_t * P);
-
 double simplex_circumradius(
     void * s, point_cloud_t * P);
-
-int32_t simplex_smallestball(
-    void * s,
-    uint32_t dim, uint32_t np, double * p,
-    double * cc, double * cr);
 
 uint64_t simplex_index_in_coface(
     void * s, void * s_coface);
@@ -316,27 +292,6 @@ int32_t simplices_cofaces(
 
 uint64_t semel_lap(
 		void);
-
-uint64_t bitreverse(
-    uint64_t n);
-
-uint32_t low(
-    uint32_t nx, uint64_t * x);
-
-int32_t identity(
-    uint32_t n, uint64_t * V);
-
-int32_t dense_compress(
-    uint32_t n, uint64_t * A, uint64_t * B);
-
-int32_t dense_decompress(
-    uint32_t n, uint64_t * A, uint64_t * B);
-
-int32_t dense_anti_transpose(
-    uint32_t n, uint64_t * A, uint64_t * B);
-
-int32_t dense_compressed_to_upper_triangle(
-    uint32_t n, uint64_t * A, uint64_t * B);
 
 int32_t nsrps(
     uint64_t nx, uint32_t * x,

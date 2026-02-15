@@ -220,120 +220,6 @@ int32_t elementary_simplices_coboundary_z(
   return 0;
 }
 
-// ── on-the-fly coboundary for a single simplex ──────────────────────
-
-void * elementary_coboundary_of_z(
-    uint64_t sid, complex_cochain_t * Cc)
-{
-  void * d = NULL;
-  uint64_t * p_cofaces;
-  JLG(p_cofaces, Cc->C.cofaces, sid);
-  if (p_cofaces == NULL) return NULL;
-
-  uint64_t * sid_s;
-  JLG(sid_s, Cc->C.simplices, sid);
-  if (sid_s == NULL) return NULL;
-
-  uint64_t cid;
-  uint64_t * p_cf, * q;
-  cid = 0; JLF(p_cf, *p_cofaces, cid);
-  while (p_cf != NULL)
-  {
-    uint64_t * cid_s;
-    JLG(cid_s, Cc->C.simplices, cid);
-    if (cid_s != NULL)
-    {
-      fmpz_t * c = (fmpz_t *) malloc(sizeof(fmpz_t));
-      fmpz_init(*c);
-      fmpz_set_si(*c, simplex_sign_in_coface(*sid_s, *cid_s));
-
-      if (Cc->local_system != NULL)
-      {
-        uint64_t pos = simplex_index_in_coface(*sid_s, *cid_s);
-        if (pos == 0)
-        {
-          uint8_t vv [C_1_KB];
-          uint64_t * pv;
-          vv[0] = 0; JSLF(pv, *cid_s, vv);
-          uint64_t vert_0 = uint256_to_64(&vv[0]);
-          JSLN(pv, *cid_s, vv);
-          uint64_t vert_1 = uint256_to_64(&vv[0]);
-          int64_t w = get_local_transport(vert_0, vert_1, Cc->local_system);
-          if (w != 1)
-          {
-            fmpz_t wt;
-            fmpz_init(wt);
-            fmpz_set_si(wt, w);
-            fmpz_mul(*c, *c, wt);
-            fmpz_clear(wt);
-          }
-        }
-      }
-
-      JLI(q, d, cid); *q = (uint64_t) c;
-    }
-    JLN(p_cf, *p_cofaces, cid);
-  }
-
-  return d;
-}
-
-void * elementary_coboundary_of(
-    uint64_t sid, complex_cochain_t * Cc)
-{
-  void * d = NULL;
-  uint64_t * p_cofaces;
-  JLG(p_cofaces, Cc->C.cofaces, sid);
-  if (p_cofaces == NULL) return NULL;
-
-  uint64_t * sid_s;
-  JLG(sid_s, Cc->C.simplices, sid);
-  if (sid_s == NULL) return NULL;
-
-  uint64_t cid;
-  uint64_t * p_cf, * q;
-  cid = 0; JLF(p_cf, *p_cofaces, cid);
-  while (p_cf != NULL)
-  {
-    uint64_t * cid_s;
-    JLG(cid_s, Cc->C.simplices, cid);
-    if (cid_s != NULL)
-    {
-      fq_t * c = (fq_t *) malloc(sizeof(fq_t));
-      fq_init(*c, Cc->fqctx);
-      fq_set_si(*c, simplex_sign_in_coface(*sid_s, *cid_s), Cc->fqctx);
-
-      if (Cc->local_system != NULL)
-      {
-        uint64_t pos = simplex_index_in_coface(*sid_s, *cid_s);
-        if (pos == 0)
-        {
-          uint8_t vv [C_1_KB];
-          uint64_t * pv;
-          vv[0] = 0; JSLF(pv, *cid_s, vv);
-          uint64_t vert_0 = uint256_to_64(&vv[0]);
-          JSLN(pv, *cid_s, vv);
-          uint64_t vert_1 = uint256_to_64(&vv[0]);
-          int64_t w = get_local_transport(vert_0, vert_1, Cc->local_system);
-          if (w != 1)
-          {
-            fq_t wt;
-            fq_init(wt, Cc->fqctx);
-            fq_set_si(wt, w, Cc->fqctx);
-            fq_mul(*c, *c, wt, Cc->fqctx);
-            fq_clear(wt, Cc->fqctx);
-          }
-        }
-      }
-
-      JLI(q, d, cid); *q = (uint64_t) c;
-    }
-    JLN(p_cf, *p_cofaces, cid);
-  }
-
-  return d;
-}
-
 uint32_t elementary_delta_z(
     void * alpha, complex_cochain_t * Cc,
     void ** d_alpha)
@@ -465,8 +351,10 @@ int32_t coboundary_operator(
             {
               char * tmp = fq_get_str_pretty(*((fq_t *) *p_), Cc->fqctx);
               int32_t a = atoi(tmp);
+              flint_free(tmp);
               fmpz_t f; fq_ctx_order(f, Cc->fqctx);
               uint32_t o = fmpz_get_ui(f);
+              fmpz_clear(f);
               a = (a > (int32_t) (o >> 1)) ? (a - o) : a;
 
               JLI(q__, Dk_v, *p__); *q__ = a;

@@ -22,18 +22,14 @@ int32_t s_free(
 {
   if (ctx != NULL)
   {
+    _unload_point_cloud_all();
+    _unload_complex_all();
+    _unload_time_series_all();
     ctx_free(ctx);
     ctx_log_free(ctx);
     free(ctx);
     ctx = NULL;
   }
-  return 0;
-}
-
-int32_t _free_p(
-    void ** p)
-{
-  free(*p);
   return 0;
 }
 
@@ -449,7 +445,9 @@ int32_t _get_scales(
   if (p != NULL)
   {
     point_cloud_t * P = (point_cloud_t *) *p;
-    scales_from_distance_matrix(P->nA, P->A, nr, r);
+    uint32_t nr32 = 0;
+    scales_from_distance_matrix(P->nA, P->A, &nr32, r);
+    *nr = (uint64_t) nr32;
     *precision = (double) PRECISION;
   }
   return 0;
@@ -495,21 +493,6 @@ int32_t _unload_time_series_all(
   {
     _unload_time_series(k);
     JLN(p, ctx->S, k);
-  }
-  return 0;
-}
-
-int32_t _sliding_window_embedding(
-    uint64_t k, uint32_t d, uint32_t tau,
-    uint64_t * kP)
-{
-  uint64_t * p;
-  JLG(p, ctx->S, k);
-  if (p != NULL)
-  {
-    //uint64_t i, j;
-
-    *kP = _get_point_cloud_index();
   }
   return 0;
 }

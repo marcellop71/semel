@@ -26,7 +26,19 @@ double vector_dist(
       zq += pow((double) q[i], 2.0);
     }
     zp = sqrt(zp); zq = sqrt(zq);
-    z = zpq / (zp * zq);
+    double denom = zp * zq;
+    z = (denom > 0.0) ? (1.0 - zpq / denom) : 0.0;
+    z = round(z * PRECISION) / PRECISION;
+  }
+
+  if (distance == DISTANCE_SURFACE_CYLINDER)
+  {
+    double tmp_x_1 = fabs(p[0] - q[0]);
+    double tmp_x_2 = b[0] - tmp_x_1;
+    double tmp_x = (tmp_x_1 < tmp_x_2) ? tmp_x_1 : tmp_x_2;
+    double tmp_y = p[1] - q[1];
+    z = pow(tmp_x, 2.0) + pow(tmp_y, 2.0);
+    z = sqrt(z);
     z = round(z * PRECISION) / PRECISION;
   }
 
@@ -162,13 +174,6 @@ int32_t distance_matrix(
   free(threads);
   free(args);
   return 0;
-}
-
-uint32_t num_points_from_card_of_distance_matrix(
-    uint32_t a)
-{
-  uint32_t n = (1 + (uint32_t) sqrt(1 + (8 * a))) / 2;
-  return n;
 }
 
 double get_dist_G(
